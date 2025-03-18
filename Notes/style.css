@@ -150,7 +150,7 @@ body {
 }
 
 .note:active {
-    animation: stretch 0.2s ease; 
+    animation: stretch 0.5s ease; 
 }
 
 
@@ -164,4 +164,54 @@ body {
     100% {
         transform: scale(1);
     }
+}
+
+#deleteSelected {
+    background-color: #2b2b2b;
+    color: rgb(194, 0, 0);
+    border: none;
+    padding: 10px;
+    margin-bottom: 10px;
+    width: 100%;
+    cursor: pointer;
+    font-size: 16px;
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+#deleteSelected:hover {
+    background-color: #000000;
+}
+
+
+.category-container {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 15px; 
+}
+
+.category-btn {
+    background-color: #2b2b2b;
+    color: white; 
+    border: none;
+    padding: 8px;
+    margin-left: 20px; 
+    margin-bottom: 8px;
+    width: calc(100% - 20px);
+    cursor: pointer;
+    font-size: 14px;
+    border-radius: 15px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.category-btn:hover {
+    background-color: #424242;
+}
+
+.hidden {
+    display: none;
 }
