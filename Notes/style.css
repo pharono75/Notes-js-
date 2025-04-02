@@ -215,3 +215,36 @@ body {
 .hidden {
     display: none;
 }
+
+/*Менюшка*/
+
+.context-menu {
+    position: absolute;
+    background: #2b2b2b;
+    border: 1px solid #424242;
+    border-radius: 5px;
+    box-shadow: 2px 2px 5px rgba(0,0,0,0.2);
+    z-index: 1000;
+    width: 150px;
+}
+
+.context-menu-item {
+    padding: 8px 12px;
+    color: white;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.context-menu-item:hover {
+    background: #424242;
+}
+
+.context-menu-item.delete {
+    color: rgb(194, 0, 0);
+}
+
+.context-menu-item.delete:hover {
+    background: #000000;
+}

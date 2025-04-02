@@ -14,6 +14,104 @@ let selectedNote = null;
 let lastNotePosition = { left: 50, top: 50 }; 
 let maxZIndex = 1; 
 
+// Исправлено: createContexMenu -> createContextMenu и contextMenu вместо contexMenu
+function createContextMenu(note) {
+    let contextMenu = document.getElementById('noteContextMenu');
+    if (!contextMenu) {  // Исправлено: contextMenu вместо contexMenu
+        contextMenu = document.createElement('div');
+        contextMenu.id = 'noteContextMenu';
+        contextMenu.className = 'context-menu';
+        document.body.appendChild(contextMenu);
+    }
+
+    contextMenu.innerHTML = '';
+    
+    const menuItems = [
+        { 
+            label: 'Важные', 
+            icon: '<img src="img/important.png" alt="!">',
+            action: () => setCategory("#e83f5d", note) 
+        },
+        { 
+            label: 'Ежедневные', 
+            icon: '<img src="img/daily.png" alt="~">',
+            action: () => setCategory("#19c186", note) 
+        },
+        { 
+            label: 'Отложенные', 
+            icon: '<img src="img/postponed.png" alt=">">',
+            action: () => setCategory("#3f82e8", note) 
+        },
+        { 
+            label: 'Удалить', 
+            icon: '<img src="img/clearp.png" alt="X">',
+            action: () => deleteNote(note),
+            className: 'delete'
+        }
+    ];
+
+    menuItems.forEach(item => {
+        const menuItem = document.createElement('div');
+        menuItem.className = `context-menu-item ${item.className || ''}`;
+        menuItem.innerHTML = `${item.icon} ${item.label}`;
+        menuItem.addEventListener('click', (e) => {
+            e.stopPropagation();
+            item.action();
+            hideContextMenu();
+        });
+        contextMenu.appendChild(menuItem);
+    });
+
+    return contextMenu;
+}
+
+function showContextMenu(e, note) {
+    e.preventDefault();
+    
+    if (selectedNote !== note) {
+        if (selectedNote) {
+            selectedNote.style.border = "none";
+        }
+        selectedNote = note;
+        maxZIndex++;
+        note.style.zIndex = maxZIndex;
+        note.style.border = "2px solid #ffffff";
+    }
+
+    const contextMenu = createContextMenu(note);
+    contextMenu.style.display = 'block';
+    
+    const menuWidth = contextMenu.offsetWidth;
+    const menuHeight = contextMenu.offsetHeight;
+    let x = e.pageX;
+    let y = e.pageY;
+
+    if (x + menuWidth > window.innerWidth) {
+        x = window.innerWidth - menuWidth;
+    }
+    if (y + menuHeight > window.innerHeight) {
+        y = window.innerHeight - menuHeight;
+    }
+
+    contextMenu.style.left = x + 'px';
+    contextMenu.style.top = y + 'px';
+}
+
+function hideContextMenu() {
+    const contextMenu = document.getElementById('noteContextMenu');
+    if (contextMenu) {
+        contextMenu.style.display = 'none';
+    }
+}
+
+function deleteNote(note) {
+    note.remove();
+    if (selectedNote === note) {
+        selectedNote = null;
+    }
+    saveNotes();
+}
+
 function createNote() {
     let note = document.createElement("div");
     note.className = "note";
@@ -28,16 +126,20 @@ function createNote() {
     note.style.left = lastNotePosition.left + "px";
     note.style.top = lastNotePosition.top + "px";
     note.style.backgroundColor = defaultColor;
-    note.style.zIndex = maxZIndex; 
+    note.style.zIndex = maxZIndex;
+
+    note.addEventListener('contextmenu', (e) => {
+        showContextMenu(e, note);
+    });
 
     note.addEventListener("click", function(e) {
         e.stopPropagation();
         if (selectedNote) {
             selectedNote.style.border = "none";
-            selectedNote.style.zIndex = parseInt(selectedNote.style.zIndex) || 1; 
+            selectedNote.style.zIndex = parseInt(selectedNote.style.zIndex) || 1;
         }
         selectedNote = note;
-        maxZIndex++; 
+        maxZIndex++;
         note.style.zIndex = maxZIndex;
         note.style.border = "2px solid #ffffff";
     });
@@ -80,7 +182,6 @@ function makeDraggable(note) {
     document.addEventListener("mouseup", function () {
         if (isDragging) {
             isDragging = false;
-            
         }
     });
 }
@@ -110,16 +211,19 @@ function loadNotes() {
         note.style.left = data.left;
         note.style.top = data.top;
         note.style.backgroundColor = data.backgroundColor || defaultColor;
-        note.style.zIndex = data.zIndex || 1; 
+        note.style.zIndex = data.zIndex || 1;
         note.innerText = data.text;
 
-        
         const left = parseInt(data.left);
         const top = parseInt(data.top);
         const zIndex = parseInt(data.zIndex) || 1;
         if (left > lastNotePosition.left) lastNotePosition.left = left;
         if (top > lastNotePosition.top) lastNotePosition.top = top;
         if (zIndex > maxZIndex) maxZIndex = zIndex;
+
+        note.addEventListener('contextmenu', (e) => {
+            showContextMenu(e, note);
+        });
 
         note.addEventListener("click", function(e) {
             e.stopPropagation();
@@ -162,9 +266,9 @@ function toggleCategories() {
     categoryContainer.classList.toggle("hidden");
 }
 
-function setCategory(color) {
-    if (selectedNote) {
-        selectedNote.style.backgroundColor = color;
+function setCategory(color, note = selectedNote) {
+    if (note) {
+        note.style.backgroundColor = color;
         saveNotes();
     } else {
         alert("Пожалуйста, выберите заметку для изменения категории");
@@ -174,7 +278,11 @@ function setCategory(color) {
 document.addEventListener("click", function(e) {
     if (selectedNote && !e.target.classList.contains("note")) {
         selectedNote.style.border = "none";
-        selectedNote.style.zIndex = parseInt(selectedNote.style.zIndex) || 1; 
+        selectedNote.style.zIndex = parseInt(selectedNote.style.zIndex) || 1;
         selectedNote = null;
+    }
+    const contextMenu = document.getElementById('noteContextMenu');
+    if (contextMenu && !contextMenu.contains(e.target) && !e.target.classList.contains('note')) {
+        hideContextMenu();
     }
 });
