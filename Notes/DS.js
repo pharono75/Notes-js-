@@ -1,4 +1,7 @@
 document.addEventListener("DOMContentLoaded", function () {
+    // Инициализация переключателя темы
+    initThemeSwitch();
+    // Существующие обработчики событий
     document.querySelector("#addNote").addEventListener("click", createNote);
     document.getElementById("clearNotes").addEventListener("click", clearNotes);
     document.getElementById("deleteSelected").addEventListener("click", deleteSelectedNote);
@@ -8,6 +11,41 @@ document.addEventListener("DOMContentLoaded", function () {
     document.getElementById("postponedCategory").addEventListener("click", () => setCategory("#3f82e8"));
     loadNotes();
 });
+
+// Функция инициализации переключателя темы
+function initThemeSwitch() {
+    const themeSwitch = document.getElementById('themeSwitch');
+    const themeIcon = document.getElementById('themeIcon');
+    const themeText = document.getElementById('themeText');
+    
+    // Загрузка сохраненной темы
+    const savedTheme = localStorage.getItem('theme') || 'light';
+    setTheme(savedTheme);
+    
+    // Обработчик клика по переключателю
+    themeSwitch.addEventListener('click', () => {
+        const currentTheme = document.body.getAttribute('data-theme') || 'light';
+        const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+        setTheme(newTheme);
+        localStorage.setItem('theme', newTheme);
+    });
+}
+
+// Функция установки темы
+function setTheme(theme) {
+    const themeIcon = document.getElementById('themeIcon');
+    const themeText = document.getElementById('themeText');
+    
+    if (theme === 'dark') {
+        document.body.setAttribute('data-theme', 'dark');
+        themeIcon.src = 'img/moon.png';
+        themeText.textContent = 'Темная тема';
+    } else {
+        document.body.removeAttribute('data-theme');
+        themeIcon.src = 'img/sun.png';
+        themeText.textContent = 'Светлая тема';
+    }
+}
 
 const defaultColor = "#eae773"; 
 let selectedNote = null;    
