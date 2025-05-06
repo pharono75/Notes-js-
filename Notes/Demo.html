@@ -5,11 +5,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Remember2Do</title>
     <link rel="stylesheet" href="style.css">
+    <script src="DS.js" defer></script>
 </head>
 <body>
     <div class="empty">
         <div class="sidebar">
             <div class="header">Remember2Do</div>
+            <button class="theme-switch" id="themeSwitch">
+                <img src="img/sun.png" alt="Сменить тему" id="themeIcon">
+                <span id="themeText">Светлая тема</span>
+            </button>
             <button id="addNote"><img src="img/addp.png" alt="+">Заметка</button>
             <button id="addTask"><img src="img/taskp.png" alt="[]">Тип задачи</button>
             <div id="categoryButtons" class="category-container hidden">
@@ -22,6 +27,5 @@
         </div>
         <div id="notesContainer"></div>
     </div>
-    <script src="DS.js"></script>
 </body>
 </html>
